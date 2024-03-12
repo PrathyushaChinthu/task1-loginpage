@@ -2,7 +2,6 @@
 import {
   Box,
   Button,
-  Container,
   FormControl,
   FormLabel,
   Grid,
@@ -46,7 +45,7 @@ export default function Home() {
             backgroundImage:
               "url(https://www.moople.in/blog/wp-content/uploads/2018/02/New-Project-99.jpg)",
             backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundPosition: "left",
             height: "100%",
           }}
         />
@@ -61,7 +60,6 @@ export default function Home() {
           alignItems="center"
           height="100%"
           p={2}
-          bgcolor="#0795C2"
           sx={{
             border: "2px solid grey",
           }}
@@ -94,7 +92,8 @@ export default function Home() {
             <Button
               type="button"
               onClick={() => router.push("/users")}
-              sx={{ mt: 2, backgroundColor: "#1976D2" }}
+              style={{ backgroundColor: "#378CE7", flex: "1" }}
+              sx={{ mt: 2 }}
               color="primary"
               variant="contained"
             >
