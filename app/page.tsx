@@ -91,7 +91,7 @@ export default function Home() {
             />
             <Button
               type="button"
-              onClick={() => router.push("/users")}
+              onClick={() => router.push("/posts")}
               style={{ backgroundColor: "#378CE7", flex: "1" }}
               sx={{ mt: 2 }}
               color="primary"
