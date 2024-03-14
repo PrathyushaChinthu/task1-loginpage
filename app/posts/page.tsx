@@ -23,7 +23,7 @@ export interface Post {
 
 const Posts = () => {
   const router = useRouter();
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5); // Adjusted to display 5 rows per page
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,7 +33,7 @@ const Posts = () => {
     async (currentPage: number) => {
       setIsLoading(true);
       try {
-        const start = rowsPerPage * currentPage;
+        const start = rowsPerPage * (currentPage - 1);
         const res = await fetch(
           `https://jsonplaceholder.typicode.com/posts?_start=${start}&_limit=${rowsPerPage}`
         );
@@ -49,10 +49,10 @@ const Posts = () => {
   );
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-    fetchData(newPage);
+    setPage(newPage + 1);
+    fetchData(newPage + 1);
     // Update URL with the new page number
-    router.push(`/posts?page=${newPage}`);
+    router.push(`/posts?page=${newPage + 1}`);
   };
 
   const handleChangeRowsPerPage = (
@@ -60,14 +60,14 @@ const Posts = () => {
   ) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
-    setPage(0); // Reset page number when changing rows per page
-    fetchData(0); // Fetch data for the first page after changing rows per page
+    setPage(1); // Reset page number when changing rows per page
+    fetchData(1); // Fetch data for the first page after changing rows per page
     // Update URL with the new rows per page and reset to page 0
     router.push(`/posts?page=0&rowsPerPage=${newRowsPerPage}`);
   };
 
   useEffect(() => {
-    const currentPage = parseInt(searchParams.get("page") || "0", 10);
+    const currentPage = parseInt(searchParams.get("page") || "1", 10);
     setPage(currentPage);
     fetchData(currentPage);
   }, [searchParams, fetchData]);
@@ -131,14 +131,13 @@ const Posts = () => {
           component="div"
           count={100} // Placeholder count for total number of items
           rowsPerPage={rowsPerPage}
-          page={page}
+          page={page - 1}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </div>
-      <div style={{ marginTop: "20px" }}>
-        {/* Render current page number */}
-        <Typography variant="button">Page {page + 1}</Typography>
+      <div style={{ margin: 20 }}>
+        <Typography style={{ color: "black" }}>Page : {page}</Typography>
       </div>
     </div>
   );

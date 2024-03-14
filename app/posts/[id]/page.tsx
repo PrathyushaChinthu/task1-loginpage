@@ -69,7 +69,9 @@ const PostId = () => {
       ) : (
         <div>
           <Link href={"/posts"}>
-            <button style={styles.button}>&lt;</button>
+            <button style={styles.button} onClick={() => router.back()}>
+              &lt;
+            </button>
           </Link>
           <div style={styles.post}>
             <div>Id: {post?.id}</div>
