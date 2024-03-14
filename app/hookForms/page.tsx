@@ -8,42 +8,19 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-
 export default function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const router = useRouter();
-
   const handleSubmit = (event: any) => {
     event.preventDefault();
-
-    setEmailError(false);
-    setPasswordError(false);
-
-    if (email === "") {
-      setEmailError(true);
-    }
-    if (password === "") {
-      setPasswordError(true);
-    }
-
-    if (email && password) {
-      console.log(email, password);
-    }
   };
 
   return (
     <Grid container sx={{ height: "100vh" }}>
       {/* Left Half - Image */}
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={8}>
         <Box
           sx={{
             backgroundImage:
-              "url(https://www.moople.in/blog/wp-content/uploads/2018/02/New-Project-99.jpg)",
+              "url(https://as2.ftcdn.net/v2/jpg/01/19/11/55/1000_F_119115529_mEnw3lGpLdlDkfLgRcVSbFRuVl6sMDty.jpg)",
             backgroundSize: "cover",
             backgroundPosition: "left",
             height: "100%",
@@ -52,46 +29,45 @@ export default function Home() {
       </Grid>
 
       {/* Right Half - Login Form */}
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={4}>
         <Box
           display="flex"
           flexDirection="column"
           justifyContent="center"
-          alignItems="center"
+          alignItems="right"
           height="100%"
+          width="100%"
           p={2}
           sx={{
             border: "2px solid grey",
           }}
         >
           <FormControl onSubmit={handleSubmit}>
-            <Typography sx={{ mb: 1 }} variant="h4">
+            <Typography sx={{ mb: 1 }} variant="h3">
               Welcome
             </Typography>
+
             <FormLabel required>Email</FormLabel>
             <TextField
               sx={{ mb: 1 }}
               color="primary"
               type="email"
+              name="email"
               fullWidth
-              value={email}
-              error={emailError}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="abc@gmail.com"
               required
             />
             <FormLabel required>Password</FormLabel>
             <TextField
               color="primary"
               type="password"
-              value={password}
-              error={passwordError}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              name="password"
               fullWidth
+              placeholder="......"
+              required
             />
             <Button
-              type="button"
-              onClick={() => router.push("/hookForms")}
+              type="submit"
               style={{ backgroundColor: "#378CE7", flex: "1" }}
               sx={{ mt: 2 }}
               color="primary"
