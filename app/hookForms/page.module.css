@@ -1,0 +1,4 @@
+.button{
+    style:{{ backgroundColor: "#378CE7", flex: "1" }}
+    sx:{{ mt: 2 }}
+}

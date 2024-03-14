@@ -1,18 +1,40 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useRouter } from "next/navigation";
+//import styles from './page.module.css';
 import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Grid,
   TextField,
   Typography,
 } from "@mui/material";
+import { useForm } from "react-hook-form";
+const signupSchema = z
+  .object({
+    firstName: z.string().min(3, "firstName is required").max(15),
+    lastName: z.string().min(3, "lastName is required").max(15),
+    email: z.string().email("Email must be a valid email address"),
+    password: z.string().min(8, "password should be atleast 8 chars").max(12),
+  })
+  .required();
 export default function Home() {
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(signupSchema),
+  });
+  const onSubmit = (data: any) => {
+    console.log(data);
   };
-
+  console.log(errors);
   return (
     <Grid container sx={{ height: "100vh" }}>
       {/* Left Half - Image */}
@@ -42,30 +64,71 @@ export default function Home() {
             border: "2px solid grey",
           }}
         >
-          <FormControl onSubmit={handleSubmit}>
+          <FormControl onSubmit={handleSubmit(onSubmit)}>
             <Typography sx={{ mb: 1 }} variant="h3">
               Welcome
             </Typography>
-
+            <FormHelperText sx={{ mb: 1 }}>
+              Already have an account?
+              <Button
+                variant="text"
+                type="button"
+                onClick={() => router.push("/loginPage")}
+              >
+                Sign in
+              </Button>
+            </FormHelperText>
+            <FormLabel required>First name</FormLabel>
+            <TextField
+              sx={{ mb: 1 }}
+              {...register("firstName")}
+              color="primary"
+              type="string"
+              name="firstName"
+              fullWidth
+              placeholder="John"
+            />
+            <FormHelperText sx={{ mt: 1 }}>
+              {errors?.firstName?.message as any}
+            </FormHelperText>
+            <FormLabel required>Last Name</FormLabel>
+            <TextField
+              sx={{ mb: 1 }}
+              {...register("lastName")}
+              color="primary"
+              type="string"
+              name="lastName"
+              fullWidth
+              placeholder="Williams"
+            />
+            <FormHelperText sx={{ mt: 1 }}>
+              {errors?.lastName?.message as any}
+            </FormHelperText>
             <FormLabel required>Email</FormLabel>
             <TextField
               sx={{ mb: 1 }}
+              {...register("email")}
               color="primary"
               type="email"
               name="email"
               fullWidth
               placeholder="abc@gmail.com"
-              required
             />
+            <FormHelperText sx={{ mt: 1 }}>
+              {errors?.email?.message as any}
+            </FormHelperText>
             <FormLabel required>Password</FormLabel>
             <TextField
               color="primary"
+              {...register("password")}
               type="password"
               name="password"
               fullWidth
               placeholder="......"
-              required
             />
+            <FormHelperText sx={{ mt: 1 }}>
+              {errors?.password?.message as any}
+            </FormHelperText>
             <Button
               type="submit"
               style={{ backgroundColor: "#378CE7", flex: "1" }}
@@ -73,8 +136,9 @@ export default function Home() {
               color="primary"
               variant="contained"
             >
-              Login
+              Create account
             </Button>
+            <Box sx={{ color: "red" }}></Box>
           </FormControl>
         </Box>
       </Grid>
