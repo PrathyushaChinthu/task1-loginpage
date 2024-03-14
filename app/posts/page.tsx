@@ -8,6 +8,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  Typography,
   TablePagination,
   TableRow,
 } from "@mui/material";
@@ -23,20 +24,6 @@ const Posts = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5); // Adjusted to display 10 rows per page
   const [posts, setPosts] = useState<Post[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-        const data: Post[] = await res.json();
-        setPosts(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -47,6 +34,19 @@ const Posts = () => {
     setRowsPerPage(parseInt(event.target.value, 5));
     setPage(1);
   };
+  const fetchData = async () => {
+    try {
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      const data: Post[] = await res.json();
+      setPosts(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  fetchData();
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div
@@ -58,7 +58,22 @@ const Posts = () => {
         alignItems: "center",
       }}
     >
-      <TableContainer component={Paper} style={{ background: "#378CE7" }}>
+      <Typography
+        variant="h5"
+        sx={{
+          fontFamily: "Monospace",
+          fontStyle: "italic",
+          color: "black",
+          fontWeight: "900",
+          padding: "0.5rem",
+        }}
+      >
+        Posts
+      </Typography>
+      <TableContainer
+        component={Paper}
+        style={{ width: "90%", background: "#378CE7" }}
+      >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -77,35 +92,15 @@ const Posts = () => {
             ).map((post) => (
               <TableRow
                 key={post.id}
+                component={Link}
+                color="inherit"
+                underline="none"
+                href={`./posts/${post.id}`}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell>
-                  <Link
-                    color="inherit"
-                    underline="none"
-                    href={`./posts/${post.id}`}
-                  >
-                    {post.id}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <Link
-                    color="inherit"
-                    underline="none"
-                    href={`./posts/${post.id}`}
-                  >
-                    {post.title}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <Link
-                    color="inherit"
-                    underline="none"
-                    href={`./posts/${post.id}`}
-                  >
-                    {post.body}
-                  </Link>
-                </TableCell>
+                <TableCell>{post.id}</TableCell>
+                <TableCell>{post.title}</TableCell>
+                <TableCell>{post.body}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -115,7 +110,7 @@ const Posts = () => {
         <TablePagination
           rowsPerPageOptions={[5]} // Only option is 10 rows per page
           component="div"
-          count={posts.length}
+          count={100}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
