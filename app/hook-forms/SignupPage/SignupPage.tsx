@@ -40,7 +40,7 @@ const SignupPage = (props: Props) => {
     setGender((event.target as HTMLInputElement).value);
   };
   const handleChangeCountry = (event: SelectChangeEvent) => {
-    setCountry(event.target.value);
+    setCountry(event.target.value as string);
   };
   const {
     register,
@@ -131,18 +131,28 @@ const SignupPage = (props: Props) => {
           value={gender}
           onChange={handleChange}
         >
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
-          <FormControlLabel value="other" control={<Radio />} label="Other" />
+          <FormControlLabel
+            value="female"
+            control={<Radio {...register("gender")} />}
+            label="Female"
+          />
+          <FormControlLabel
+            value="male"
+            control={<Radio {...register("gender")} />}
+            label="Male"
+          />
+          <FormControlLabel
+            value="other"
+            control={<Radio {...register("gender")} />}
+            label="Other"
+          />
         </RadioGroup>
-        {errors.gender && (
+        {/* {errors.gender && (
           <Typography variant="body2" color="error">
             {errors?.gender?.message}
           </Typography>
-        )}
-        {/* <Typography variant="body2" color="error">
-          {errors?.gender?.message}
-        </Typography> */}
+        )} */}
+
         <InputLabel id="select-label">Country</InputLabel>
         <Select
           labelId="select-label"
@@ -150,21 +160,32 @@ const SignupPage = (props: Props) => {
           value={country}
           label="country"
           onChange={handleChangeCountry}
+          //{...register("country")}
         >
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value="Austria">Austria</MenuItem>
-          <MenuItem value="Brazil">Brazil</MenuItem>
-          <MenuItem value="Us">Us</MenuItem>
-          <MenuItem value="Uk">Uk</MenuItem>
-          <MenuItem value="India">India</MenuItem>
+          <MenuItem value="Austria" {...register("country")}>
+            Austria
+          </MenuItem>
+          <MenuItem value="Brazil" {...register("country")}>
+            Brazil
+          </MenuItem>
+          <MenuItem value="Us" {...register("country")}>
+            Us
+          </MenuItem>
+          <MenuItem value="Uk" {...register("country")}>
+            Uk
+          </MenuItem>
+          <MenuItem value="India" {...register("country")}>
+            India
+          </MenuItem>
         </Select>
-        {errors.country && (
+        {/* {errors.country && (
           <Typography variant="body2" color="error">
             {errors?.country?.message}
           </Typography>
-        )}
+        )} */}
       </FormControl>
       <Button
         type="submit"
