@@ -13,6 +13,8 @@ import {
   Grid,
   Tabs,
   Tab,
+  FormControlLabel,
+  Checkbox,
   TextField,
   Typography,
 } from "@mui/material";
@@ -22,6 +24,7 @@ const loginSchema = z
   .object({
     email: z.string().email("Email must be a valid email address"),
     password: z.string().min(8, "password should be atleast 8 chars").max(12),
+    rememberMe: z.boolean(),
   })
   .required();
 const LoginPage = () => {
@@ -84,6 +87,10 @@ const LoginPage = () => {
         label="Password"
         helperText={errors?.password?.message as any}
         error={Boolean(errors?.password?.message)}
+      />
+      <FormControlLabel
+        control={<Checkbox {...register("rememberMe")} />}
+        label="Remember me"
       />
       <Button
         type="submit"

@@ -7,15 +7,17 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Tabs,
-  Tab,
+  FormControl,
+  FormLabel,
+  MenuItem,
+  InputLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
   TextField,
   Typography,
 } from "@mui/material";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useForm } from "react-hook-form";
 //import Link from "next/link";
 const signupSchema = z
@@ -24,13 +26,22 @@ const signupSchema = z
     lastName: z.string().min(3, "lastName is required").max(15),
     email: z.string().email("Email must be a valid email address"),
     password: z.string().min(8, "password should be atleast 8 chars").max(12),
+    gender: z.string().min(1, "Gender is required"),
+    country: z.string().min(1, "Country is required"),
   })
   .required();
 type Props = {};
 const SignupPage = (props: Props) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-
+  const [gender, setGender] = useState("");
+  const [country, setCountry] = useState("");
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGender((event.target as HTMLInputElement).value);
+  };
+  const handleChangeCountry = (event: SelectChangeEvent) => {
+    setCountry(event.target.value);
+  };
   const {
     register,
     handleSubmit,
@@ -42,9 +53,9 @@ const SignupPage = (props: Props) => {
     console.log(data);
   };
   console.log(errors);
-  const toggleDialog = () => {
-    setOpen(!open);
-  };
+  // const toggleDialog = () => {
+  //   setOpen(!open);
+  // };
   return (
     <Box
       display="flex"
@@ -111,6 +122,50 @@ const SignupPage = (props: Props) => {
         helperText={errors?.password?.message as any}
         error={Boolean(errors?.password?.message)}
       />
+      <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <FormLabel id="gender-group-label">Gender</FormLabel>
+        <RadioGroup
+          row
+          aria-labelledby="gender-group-label"
+          name="gender-group"
+          value={gender}
+          onChange={handleChange}
+        >
+          <FormControlLabel value="female" control={<Radio />} label="Female" />
+          <FormControlLabel value="male" control={<Radio />} label="Male" />
+          <FormControlLabel value="other" control={<Radio />} label="Other" />
+        </RadioGroup>
+        {errors.gender && (
+          <Typography variant="body2" color="error">
+            {errors?.gender?.message}
+          </Typography>
+        )}
+        {/* <Typography variant="body2" color="error">
+          {errors?.gender?.message}
+        </Typography> */}
+        <InputLabel id="select-label">Country</InputLabel>
+        <Select
+          labelId="select-label"
+          id="simple-select"
+          value={country}
+          label="country"
+          onChange={handleChangeCountry}
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value="Austria">Austria</MenuItem>
+          <MenuItem value="Brazil">Brazil</MenuItem>
+          <MenuItem value="Us">Us</MenuItem>
+          <MenuItem value="Uk">Uk</MenuItem>
+          <MenuItem value="India">India</MenuItem>
+        </Select>
+        {errors.country && (
+          <Typography variant="body2" color="error">
+            {errors?.country?.message}
+          </Typography>
+        )}
+      </FormControl>
       <Button
         type="submit"
         style={{ backgroundColor: "#378CE7", flex: "1" }}
