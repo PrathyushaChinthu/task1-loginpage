@@ -1,7 +1,6 @@
 "use client";
-import debounce from "lodash.debounce";
-import React, { useEffect, useMemo, useState } from "react";
-import { Autocomplete, TextField } from "@mui/material";
+import React, { useEffect, useCallback, useRef, useState } from "react";
+import { Autocomplete, Box, TextField } from "@mui/material";
 interface User {
   id: number;
   name: string;
@@ -9,47 +8,63 @@ interface User {
   email: string;
 }
 const UsersPage = () => {
-  const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState<User[]>([]);
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setInputValue(value);
+  const [searchValue, setSearchValue] = useState(""); //Represents the current value entered into the search field.
+  const [options, setOptions] = useState<User[]>([]); //options represents the list of user options fetched from the API based on the search value.
+  const timeoutRef = useRef<any>(null);
 
-    // Fetch data based on the input value
-    fetch(`https://jsonplaceholder.typicode.com/users?username_like=${value}`)
-      .then((response) => response.json())
-      .then((data: User[]) => {
-        setOptions(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+  const searchUsers = useCallback(() => {
+    if (!searchValue) return;
+    console.log("set new time out");
+    timeoutRef.current = setTimeout(() => {
+      console.log("calling API by using search value");
+      // Fetch data based on the search value
+      const apiData = fetch(
+        `https://jsonplaceholder.typicode.com/users?username_like=${searchValue}`
+      )
+        .then((response) => response.json())
+        .then((data: User[]) => {
+          setOptions(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }, 400);
+  }, [searchValue]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (timeoutRef.current) {
+      console.log("prev time out cleared");
+      clearTimeout(timeoutRef.current);
+    }
+    setSearchValue(event.target.value);
   };
-  const debouncedResults = useMemo(() => {
-    return debouce(handleChange, 300);
-  }, []);
 
   useEffect(() => {
-    return () => {
-      debouncedResults.cancel();
-    };
-  });
+    console.log("useEffect called");
+    searchUsers();
+  }, [searchUsers]);
 
   return (
-    <Autocomplete
-      options={options}
-      getOptionLabel={(option) => option.username}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Search UserName"
-          variant="outlined"
-          //onChange={handleChange}
-          value={inputValue}
-          onChange={debouncedResults}
-        />
-      )}
-    />
+    <Box sx={{ padding: 16 }}>
+      <Autocomplete
+        options={options}
+        getOptionLabel={(option) => option.username}
+        renderInput={(params) => (
+          <TextField
+            style={{
+              background: "white",
+              width: "90%",
+              color: "blue",
+            }}
+            {...params}
+            label="Search UserName"
+            variant="outlined"
+            onChange={handleChange}
+            value={searchValue}
+          />
+        )}
+      />
+    </Box>
   );
 };
 
