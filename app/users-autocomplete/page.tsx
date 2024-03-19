@@ -15,6 +15,7 @@ const UsersPage = () => {
   const searchUsers = useCallback(() => {
     if (!searchValue) return;
     console.log("set new time out");
+    //searchUsers function sets a timeout of 400 milliseconds before making the API call.
     timeoutRef.current = setTimeout(() => {
       console.log("calling API by using search value");
       // Fetch data based on the search value
@@ -37,6 +38,9 @@ const UsersPage = () => {
       clearTimeout(timeoutRef.current);
     }
     setSearchValue(event.target.value);
+    if (!event.target.value) {
+      setOptions([]);
+    }
   };
 
   useEffect(() => {
