@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import debounce from "lodash.debounce";
+import React, { useEffect, useMemo, useState } from "react";
 import { Autocomplete, TextField } from "@mui/material";
 interface User {
   id: number;
@@ -24,6 +25,16 @@ const UsersPage = () => {
         console.error("Error fetching data:", error);
       });
   };
+  const debouncedResults = useMemo(() => {
+    return debouce(handleChange, 300);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      debouncedResults.cancel();
+    };
+  });
+
   return (
     <Autocomplete
       options={options}
@@ -33,8 +44,9 @@ const UsersPage = () => {
           {...params}
           label="Search UserName"
           variant="outlined"
-          onChange={handleChange}
+          //onChange={handleChange}
           value={inputValue}
+          onChange={debouncedResults}
         />
       )}
     />
