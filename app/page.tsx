@@ -91,7 +91,7 @@ export default function Home() {
             />
             <Button
               type="button"
-              onClick={() => router.push("/date-pickers")}
+              onClick={() => router.push("/age-calculator")}
               //onClick={() => router.push("/hook-forms")}
               style={{ backgroundColor: "#378CE7", flex: "1" }}
               sx={{ mt: 2 }}
