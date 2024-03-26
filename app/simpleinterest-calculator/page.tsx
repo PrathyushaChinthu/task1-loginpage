@@ -1,55 +1,49 @@
 "use client";
+import { Box, Button, Typography } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { Dayjs } from "dayjs";
 import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Box, Button, TextField, Typography } from "@mui/material";
 
-// Define Zod schema for the form data
-const interestSchema = z.object({
-  principal: z.coerce.number().positive(),
-  rate: z.coerce.number().positive(),
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date(),
-});
+type TimePeriod = {
+  years: number;
+  months: number;
+  days: number;
+  remainingMonths: number;
+  remainingDays: number;
+};
 
-const SimpleInterestCalculator = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(interestSchema),
-  });
+const Page = () => {
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [timePeriod, setTimePeriod] = useState<TimePeriod | null>(null);
 
-  const [interestResult, setInterestResult] = useState<number | null>(null);
-  const [totalResult, setTotalResult] = useState<number | null>(null);
-  const onSubmit = (data: any) => {
-    // Calculate time difference in milliseconds
-    const timeDifferenceMs =
-      new Date(data.endDate).getTime() - new Date(data.startDate).getTime();
-    // Convert time difference to years
-    const time = timeDifferenceMs / (1000 * 60 * 60 * 24 * 365);
+  const onSubmit = () => {
+    if (!startDate || !endDate) return;
 
-    // Calculate simple interest
-    const interest = (data.principal * data.rate * time) / 100;
-    setInterestResult(interest);
-    // Calculate total amount
-    const total = data.principal + interest;
-    setTotalResult(total);
+    const years = endDate.diff(startDate, "year");
+    const months = endDate.diff(startDate, "month");
+    const remainingMonths = months - years * 12;
+    const days = endDate.diff(startDate, "day");
+    const remainingDays = days - years * 365;
+
+    setTimePeriod({
+      years,
+      months,
+      days,
+      remainingMonths,
+      remainingDays,
+    });
   };
 
   return (
     <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
-        height: "100vh",
-      }}
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
+      height={"100vh"}
+      display={"flex"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      sx={{ backgroundColor: "black" }}
     >
       <Box
         width={"50%"}
@@ -68,108 +62,68 @@ const SimpleInterestCalculator = () => {
           fontSize={"2.5rem"}
           fontWeight={"600"}
         >
-          Simple Interest Calculator
+          Simple Interest
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
-          <Controller
-            name="principal"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                id="principal"
-                label="Principal Amount"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
+          <Typography color={"black"}>Start Date:</Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                sx={{
+                  backgroundColor: "whitesmoke",
+                  borderRadius: "10px",
                 }}
-                error={Boolean(errors?.principal)}
-                helperText={(errors?.principal?.message || "") as any}
+                value={startDate}
+                onChange={(newStartDate) => {
+                  setStartDate(newStartDate);
+                }}
               />
-            )}
-          />
+            </DemoContainer>
+          </LocalizationProvider>
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
-          <Controller
-            name="rate"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                id="rate"
-                label="Rate of Interest (%)"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
+          <Typography color={"black"}>End Date:</Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                sx={{
+                  backgroundColor: "whitesmoke",
+                  borderRadius: "10px",
                 }}
-                error={Boolean(errors?.rate)}
-                helperText={(errors?.rate?.message || "") as any}
+                value={endDate}
+                onChange={(newEndDate) => {
+                  setEndDate(newEndDate);
+                }}
               />
-            )}
-          />
+            </DemoContainer>
+          </LocalizationProvider>
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
-          <Controller
-            name="startDate"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                id="startDate"
-                label="Start Date"
-                type="date"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={Boolean(errors?.startDate)}
-                helperText={(errors?.startDate?.message || "") as any}
-              />
-            )}
-          />
+          <button
+            onClick={onSubmit}
+            style={{
+              backgroundColor: "#124076",
+              color: "white",
+              padding: "1rem",
+              borderRadius: "1rem",
+            }}
+          >
+            Calculate
+          </button>
         </Box>
-        <Box flex={"1"} padding={"0 1rem"}>
-          <Controller
-            name="endDate"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                id="endDate"
-                label="End Date"
-                type="date"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={Boolean(errors?.endDate)}
-                helperText={(errors?.endDate?.message || "") as any}
-              />
-            )}
-          />
-        </Box>
-        {interestResult !== null && (
-          <Box mt={2} bgcolor="white" p={2}>
-            <Typography variant="body1">
-              Simple Interest: {interestResult}
+        {timePeriod && (
+          <Box color={"white"} flex={"1"} padding={"0 1rem 1rem 1rem"}>
+            Age:
+            <Typography>
+              {timePeriod.years} years and {timePeriod.remainingMonths} months
+              and
+              {timePeriod.remainingDays} days
             </Typography>
           </Box>
         )}
-        {totalResult !== null && (
-          <Box mt={2} bgcolor="white" p={2}>
-            <Typography variant="body1">Total Amount: {totalResult}</Typography>
-          </Box>
-        )}
-        <Box mt={2}>
-          <Button type="submit" variant="contained" color="primary">
-            Calculate
-          </Button>
-        </Box>
       </Box>
     </Box>
   );
 };
 
-export default SimpleInterestCalculator;
+export default Page;
