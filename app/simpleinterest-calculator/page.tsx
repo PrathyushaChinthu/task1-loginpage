@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -18,23 +18,28 @@ const Page = () => {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [timePeriod, setTimePeriod] = useState<TimePeriod | null>(null);
+  const [principal, setPrincipal] = useState<number | null>(null);
+  const [rate, setRate] = useState<number | null>(null);
+  const [simpleInterest, setSimpleInterest] = useState<number | null>(null);
 
   const onSubmit = () => {
-    if (!startDate || !endDate) return;
+    if (!startDate || !endDate || !principal || !rate) return;
 
     const years = endDate.diff(startDate, "year");
-    const months = endDate.diff(startDate, "month");
-    const remainingMonths = months - years * 12;
-    const days = endDate.diff(startDate, "day");
-    const remainingDays = days - years * 365;
+    const months = endDate.diff(startDate, "month") - years * 12;
+    const days = endDate.diff(startDate, "day") - (years * 365 + months * 30);
 
     setTimePeriod({
       years,
       months,
       days,
-      remainingMonths,
-      remainingDays,
+      remainingMonths: months,
+      remainingDays: days,
     });
+
+    const timeInYears = years + months / 12 + days / 365;
+    const interest = (principal * rate * timeInYears) / 100;
+    setSimpleInterest(interest);
   };
 
   return (
@@ -62,7 +67,7 @@ const Page = () => {
           fontSize={"2.5rem"}
           fontWeight={"600"}
         >
-          Simple Interest
+          Simple Interest Calculator
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
           <Typography color={"black"}>Start Date:</Typography>
@@ -99,6 +104,30 @@ const Page = () => {
           </LocalizationProvider>
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
+          <Typography color={"black"}>Principal Amount (INR):</Typography>
+          <input
+            type="number"
+            value={principal ?? ""}
+            onChange={(e) => setPrincipal(parseFloat(e.target.value))}
+            style={{
+              padding: "0.5rem",
+              borderRadius: "10px",
+            }}
+          />
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
+          <Typography color={"black"}>Rate of Interest (%):</Typography>
+          <input
+            type="number"
+            value={rate ?? ""}
+            onChange={(e) => setRate(parseFloat(e.target.value))}
+            style={{
+              padding: "0.5rem",
+              borderRadius: "10px",
+            }}
+          />
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
           <button
             onClick={onSubmit}
             style={{
@@ -111,13 +140,18 @@ const Page = () => {
             Calculate
           </button>
         </Box>
-        {timePeriod && (
+        {timePeriod && simpleInterest !== null && (
           <Box color={"white"} flex={"1"} padding={"0 1rem 1rem 1rem"}>
-            Age:
             <Typography>
-              {timePeriod.years} years and {timePeriod.remainingMonths} months
-              and
-              {timePeriod.remainingDays} days
+              Time Period: {timePeriod.years} years,{" "}
+              {timePeriod.remainingMonths} months, {timePeriod.remainingDays}{" "}
+              days
+            </Typography>
+            <Typography>
+              Simple Interest: {simpleInterest.toFixed(2)} INR
+            </Typography>
+            <Typography>
+              Total Amount: {(principal! + simpleInterest).toFixed(2)} INR
             </Typography>
           </Box>
         )}
