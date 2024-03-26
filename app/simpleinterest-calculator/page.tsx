@@ -21,6 +21,9 @@ const Page = () => {
   const [principal, setPrincipal] = useState<number | null>(null);
   const [rate, setRate] = useState<number | null>(null);
   const [simpleInterest, setSimpleInterest] = useState<number | null>(null);
+  const [interestPerYear, setInterestPerYear] = useState<number | null>(null);
+  const [interestPerMonth, setInterestPerMonth] = useState<number | null>(null);
+  const [interestPerDay, setInterestPerDay] = useState<number | null>(null);
 
   const onSubmit = () => {
     if (!startDate || !endDate || !principal || !rate) return;
@@ -40,6 +43,9 @@ const Page = () => {
     const timeInYears = years + months / 12 + days / 365;
     const interest = (principal * rate * timeInYears) / 100;
     setSimpleInterest(interest);
+    setInterestPerYear(interest / timeInYears);
+    setInterestPerMonth(interest / (timeInYears * 12));
+    setInterestPerDay(interest / (timeInYears * 365));
   };
 
   return (
@@ -149,6 +155,20 @@ const Page = () => {
             </Typography>
             <Typography>
               Simple Interest: {simpleInterest.toFixed(2)} INR
+            </Typography>
+            <Typography>
+              Interest Per Year:{" "}
+              {interestPerYear !== null ? interestPerYear.toFixed(2) : "N/A"}{" "}
+              INR
+            </Typography>
+            <Typography>
+              Interest Per Month:{" "}
+              {interestPerMonth !== null ? interestPerMonth.toFixed(2) : "N/A"}{" "}
+              INR
+            </Typography>
+            <Typography>
+              Interest Per Day:{" "}
+              {interestPerDay !== null ? interestPerDay.toFixed(2) : "N/A"} INR
             </Typography>
             <Typography>
               Total Amount: {(principal! + simpleInterest).toFixed(2)} INR
