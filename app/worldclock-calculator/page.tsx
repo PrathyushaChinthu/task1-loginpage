@@ -33,28 +33,44 @@ const IndexPage = () => {
     },
   });
   const [currentTime, setCurrentTime] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedTimezone, setSelectedTimezone] = useState("UTC");
 
-  const fetchCurrentTime = async (timeZone: any) => {
-    try {
-      const response = await fetch(
-        `https://worldtimeapi.org/api/timezone/${timeZone}`
-      );
-      const data = await response.json();
-      setCurrentTime(data.datetime);
-    } catch (error) {
-      console.error("Error fetching current time:", error);
-    }
+  useEffect(() => {
+    const fetchLocalTime = async () => {
+      try {
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const response = await fetch(
+          `https://worldtimeapi.org/api/timezone/${userTimeZone}`
+        );
+        const data = await response.json();
+        setCurrentTime(data.datetime);
+      } catch (error) {
+        console.error("Error fetching current time:", error);
+      }
+    };
+    fetchLocalTime();
+  }, []);
+
+  const onSubmit = async (data: any) => {
+    setSelectedTimezone(data.timeZone);
   };
 
   useEffect(() => {
-    fetchCurrentTime("UTC"); // Fetch initial time zone data
-  }, []);
-
-  const onSubmit = (data: any) => {
-    setSelectedTime(data.timeZone);
-    fetchCurrentTime(data.timeZone); // Fetch current time based on selected time zone
-  };
+    if (selectedTimezone !== "UTC") {
+      const fetchSelectedTime = async () => {
+        try {
+          const response = await fetch(
+            `https://worldtimeapi.org/api/timezone/${selectedTimezone}`
+          );
+          const data = await response.json();
+          setCurrentTime(data.datetime);
+        } catch (error) {
+          console.error("Error fetching selected time:", error);
+        }
+      };
+      fetchSelectedTime();
+    }
+  }, [selectedTimezone]);
 
   return (
     <Box
@@ -90,7 +106,6 @@ const IndexPage = () => {
                       label="Select Time Zone"
                       variant="outlined"
                       error={Boolean(errors.timeZone)}
-                      //helperText={(errors.timeZone?.message || "") as any}
                     >
                       <MenuItem value="UTC">UTC</MenuItem>
                       <MenuItem value="America/New_York">
@@ -110,8 +125,11 @@ const IndexPage = () => {
               </Button>
             </Grid>
           </Grid>
-          {selectedTime && (
-            <TimeSection title="Selected Time" time={currentTime} />
+          {selectedTimezone !== "UTC" && (
+            <TimeSection
+              title={`Selected Time (${selectedTimezone})`}
+              time={currentTime}
+            />
           )}
         </Box>
       </Paper>
