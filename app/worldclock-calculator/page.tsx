@@ -38,7 +38,7 @@ const IndexPage = () => {
   useEffect(() => {
     const fetchLocalTime = async () => {
       try {
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // time zone currently set in the user's browser or system settings and assigns it to the variable userTimeZone.
         const response = await fetch(
           `https://worldtimeapi.org/api/timezone/${userTimeZone}`
         );

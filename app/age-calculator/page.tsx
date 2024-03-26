@@ -1,115 +1,145 @@
 "use client";
+import { Box, Button, Typography } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { Dayjs } from "dayjs";
 import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Box, Button, TextField, Typography } from "@mui/material";
 
-// Define Zod schema for the form data
-const ageSchema = z.object({
-  dateOfBirth: z.coerce.date(),
-  ageAtTheDateOf: z.coerce.date(),
-});
+type Age = {
+  years: number;
+  months: number;
+  days: number;
+  weeks: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  remainingMonths: number;
+  remainingDays: number;
+};
 
-const AgeCalculator = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(ageSchema),
-  });
+const Page = () => {
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [age, setAge] = useState<Age | null>(null);
 
-  const [ageResult, setAgeResult] = useState<string | null>(null);
+  const onSubmit = () => {
+    if (!startDate || !endDate) return;
 
-  const onSubmit = (data: any) => {
-    const dob = new Date(data.dateOfBirth);
-    const ado = new Date(data.ageAtTheDateOf);
-
-    // Calculate age difference in milliseconds
-    const ageDifference = ado.getTime() - dob.getTime();
-
-    const years = Math.floor(ageDifference / (1000 * 60 * 60 * 24 * 365.25));
-    const remainingMilliseconds =
-      ageDifference - years * (1000 * 60 * 60 * 24 * 365.25);
-
-    const months = Math.floor(
-      remainingMilliseconds / ((1000 * 60 * 60 * 24 * 365.25) / 12)
-    );
-    const remainingDays = Math.floor(
-      (remainingMilliseconds % ((1000 * 60 * 60 * 24 * 365.25) / 12)) /
-        (1000 * 60 * 60 * 24)
-    );
-
-    const result = `${years} years, ${months} months, ${remainingDays} days`;
-    setAgeResult(result);
+    const years = endDate.diff(startDate, "year");
+    const months = endDate.diff(startDate, "month");
+    const remainingMonths = months - years * 12;
+    const days = endDate.diff(startDate, "day");
+    const remainingDays = days - years * 365;
+    const weeks = Math.floor(days / 7);
+    const hours = Math.floor(days * 24);
+    const minutes = Math.floor(hours * 60);
+    const seconds = Math.floor(minutes * 60);
+    setAge({
+      years,
+      months,
+      days,
+      weeks,
+      hours,
+      minutes,
+      seconds,
+      remainingMonths,
+      remainingDays,
+    });
   };
 
   return (
     <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "blue",
-        height: "100vh",
-      }}
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
+      height={"100vh"}
+      display={"flex"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      sx={{ backgroundColor: "black" }}
     >
-      <Box sx={{ backgroundColor: "white", p: 4 }}>
-        <Typography sx={{ mb: 3 }} variant="h5">
-          Age Calculator
-        </Typography>
-        <Controller
-          name="dateOfBirth"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              {...field}
-              id="dateOfBirth"
-              label="Date of Birth"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={Boolean(errors?.dateOfBirth)}
-              helperText={(errors?.dateOfBirth?.message || "") as any}
-            />
-          )}
-        />
-        <Controller
-          name="ageAtTheDateOf"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              {...field}
-              id="ageAtTheDateOf"
-              label="Age at the Date of"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={Boolean(errors?.secondDate)}
-              helperText={(errors?.secondDate?.message || "") as any}
-            />
-          )}
-        />
-        {ageResult && (
-          <Box mt={2} bgcolor="lightgray" p={2}>
-            <Typography variant="body1">Your age is: {ageResult}</Typography>
+      <Box
+        width={"50%"}
+        border={"5px solid black"}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        gap={"1rem"}
+        sx={{ backgroundColor: "#37e4e7" }}
+      >
+        <Box
+          sx={{ backgroundColor: "#e7376f" }}
+          width={"100%"}
+          padding={"1rem 0"}
+          textAlign={"center"}
+          fontSize={"2.5rem"}
+          fontWeight={"600"}
+        >
+          Calculate your Age
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
+          <Typography color={"black"}>Date of Birth:</Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                sx={{
+                  backgroundColor: "whitesmoke",
+                  borderRadius: "10px",
+                }}
+                value={startDate}
+                onChange={(newStartDate) => {
+                  setStartDate(newStartDate);
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
+          <Typography color={"black"}>Age at the Date of:</Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                sx={{
+                  backgroundColor: "whitesmoke",
+                  borderRadius: "10px",
+                }}
+                value={endDate}
+                onChange={(newEndDate) => {
+                  setEndDate(newEndDate);
+                }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
+          <button
+            onClick={onSubmit}
+            style={{
+              backgroundColor: "#124076",
+              color: "white",
+              padding: "1rem",
+              borderRadius: "1rem",
+            }}
+          >
+            Calculate
+          </button>
+        </Box>
+        {age && (
+          <Box color={"white"} flex={"1"} padding={"0 1rem 1rem 1rem"}>
+            Age:
+            <Typography>
+              {age.years} years and {age.remainingMonths} months and
+              {age.remainingDays} days
+            </Typography>
+            <Typography>or Months: {age.months}</Typography>
+            <Typography>or Days: {age.days}</Typography>
+            <Typography>or Weeks: {age.weeks}</Typography>
+            <Typography>or Hours: {age.hours}</Typography>
+            <Typography>or Minutes: {age.minutes}</Typography>
+            <Typography>or Seconds: {age.seconds}</Typography>
           </Box>
         )}
-        <Box mt={2}>
-          <Button type="submit" variant="contained" color="primary">
-            Calculate
-          </Button>
-        </Box>
       </Box>
     </Box>
   );
 };
 
-export default AgeCalculator;
+export default Page;

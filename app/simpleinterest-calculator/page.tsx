@@ -45,97 +45,120 @@ const SimpleInterestCalculator = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "blue",
+        backgroundColor: "black",
         height: "100vh",
       }}
       component="form"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Box sx={{ backgroundColor: "white", p: 4 }}>
-        <Typography sx={{ mb: 3 }} variant="h5">
+      <Box
+        width={"50%"}
+        border={"5px solid black"}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        gap={"1rem"}
+        sx={{ backgroundColor: "#37e4e7" }}
+      >
+        <Box
+          sx={{ backgroundColor: "#e7376f" }}
+          width={"100%"}
+          padding={"1rem 0"}
+          textAlign={"center"}
+          fontSize={"2.5rem"}
+          fontWeight={"600"}
+        >
           Simple Interest Calculator
-        </Typography>
-        <Controller
-          name="principal"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              {...field}
-              id="principal"
-              label="Principal Amount"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={Boolean(errors?.principal)}
-              helperText={(errors?.principal?.message || "") as any}
-            />
-          )}
-        />
-        <Controller
-          name="rate"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              {...field}
-              id="rate"
-              label="Rate of Interest (%)"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={Boolean(errors?.rate)}
-              helperText={(errors?.rate?.message || "") as any}
-            />
-          )}
-        />
-        <Controller
-          name="startDate"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              {...field}
-              id="startDate"
-              label="Start Date"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={Boolean(errors?.startDate)}
-              helperText={(errors?.startDate?.message || "") as any}
-            />
-          )}
-        />
-        <Controller
-          name="endDate"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              {...field}
-              id="endDate"
-              label="End Date"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={Boolean(errors?.endDate)}
-              helperText={(errors?.endDate?.message || "") as any}
-            />
-          )}
-        />
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
+          <Controller
+            name="principal"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                {...field}
+                id="principal"
+                label="Principal Amount"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={Boolean(errors?.principal)}
+                helperText={(errors?.principal?.message || "") as any}
+              />
+            )}
+          />
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
+          <Controller
+            name="rate"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                {...field}
+                id="rate"
+                label="Rate of Interest (%)"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={Boolean(errors?.rate)}
+                helperText={(errors?.rate?.message || "") as any}
+              />
+            )}
+          />
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
+          <Controller
+            name="startDate"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                {...field}
+                id="startDate"
+                label="Start Date"
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={Boolean(errors?.startDate)}
+                helperText={(errors?.startDate?.message || "") as any}
+              />
+            )}
+          />
+        </Box>
+        <Box flex={"1"} padding={"0 1rem"}>
+          <Controller
+            name="endDate"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                {...field}
+                id="endDate"
+                label="End Date"
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={Boolean(errors?.endDate)}
+                helperText={(errors?.endDate?.message || "") as any}
+              />
+            )}
+          />
+        </Box>
         {interestResult !== null && (
-          <Box mt={2} bgcolor="lightgray" p={2}>
+          <Box mt={2} bgcolor="white" p={2}>
             <Typography variant="body1">
               Simple Interest: {interestResult}
             </Typography>
           </Box>
         )}
         {totalResult !== null && (
-          <Box mt={2} bgcolor="lightgray" p={2}>
+          <Box mt={2} bgcolor="white" p={2}>
             <Typography variant="body1">Total Amount: {totalResult}</Typography>
           </Box>
         )}
