@@ -110,7 +110,7 @@ const Page = () => {
           </LocalizationProvider>
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
-          <button
+          <Button
             onClick={onSubmit}
             style={{
               backgroundColor: "#124076",
@@ -120,7 +120,7 @@ const Page = () => {
             }}
           >
             Calculate
-          </button>
+          </Button>
         </Box>
         {age && (
           <Box color={"white"} flex={"1"} padding={"0 1rem 1rem 1rem"}>

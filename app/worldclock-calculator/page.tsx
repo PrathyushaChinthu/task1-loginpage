@@ -1,140 +1,137 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import {
-  Typography,
-  Button,
-  Grid,
-  FormControl,
-  InputLabel,
-  Box,
-  Paper,
-  MenuItem,
-  Select,
-} from "@mui/material";
-import TimeSection from "./TimeSection";
+import { Box, MenuItem, Select, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
-// Define Zod schema for the form data
-const schema = z.object({
-  timeZone: z.string().nonempty(),
-});
-
-const IndexPage = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      timeZone: "UTC",
-    },
-  });
-  const [currentTime, setCurrentTime] = useState("");
-  const [selectedTimezone, setSelectedTimezone] = useState("UTC");
+export default function Home() {
+  const IntlValues = Intl.DateTimeFormat().resolvedOptions();
+  const [date, setDate] = useState(new Date().toLocaleString());
+  const [timezoneList, setTimezoneList] = useState<string[]>([]);
+  const [selectedTimezone, setSelectedTimezone] = useState("");
 
   useEffect(() => {
-    const fetchLocalTime = async () => {
-      try {
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // time zone currently set in the user's browser or system settings and assigns it to the variable userTimeZone.
-        const response = await fetch(
-          `https://worldtimeapi.org/api/timezone/${userTimeZone}`
-        );
-        const data = await response.json();
-        setCurrentTime(data.datetime);
-      } catch (error) {
-        console.error("Error fetching current time:", error);
-      }
+    const timeout = setTimeout(() => {
+      const timeNow = new Date().toLocaleString();
+      setDate(timeNow);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeout);
     };
-    fetchLocalTime();
+  }, [date]);
+
+  useEffect(() => {
+    const listOfTimezones = Intl.supportedValuesOf("timeZone");
+    setTimezoneList(listOfTimezones);
   }, []);
 
-  const onSubmit = async (data: any) => {
-    setSelectedTimezone(data.timeZone);
+  const handleChange = () => {
+    (e: any) => setSelectedTimezone(e.target.value);
   };
 
-  useEffect(() => {
-    if (selectedTimezone !== "UTC") {
-      const fetchSelectedTime = async () => {
-        try {
-          const response = await fetch(
-            `https://worldtimeapi.org/api/timezone/${selectedTimezone}`
-          );
-          const data = await response.json();
-          setCurrentTime(data.datetime);
-        } catch (error) {
-          console.error("Error fetching selected time:", error);
-        }
-      };
-      fetchSelectedTime();
-    }
-  }, [selectedTimezone]);
-
   return (
-    <Box
-      sx={{
-        backgroundColor: "black",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <Paper component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 2 }}>
-        <Box sx={{ p: 4 }}>
-          <Typography variant="h3" align="center" gutterBottom>
-            World Clock
-          </Typography>
-          <TimeSection title="Current Time" time={currentTime} />
-          <Grid
-            container
-            spacing={2}
-            alignItems="center"
-            justifyContent="center"
+    <>
+      <Box
+        height={"100vh"}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        sx={{ backgroundColor: "Black" }}
+      >
+        <Box
+          width={"60%"}
+          sx={{ backgroundColor: "#37e4e7" }}
+          border={"5px solid black"}
+        >
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
           >
-            <Grid item>
-              <FormControl>
-                <InputLabel id="select-label">Country</InputLabel>
-                <Controller
-                  name="timeZone"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      label="Select Time Zone"
-                      variant="outlined"
-                      error={Boolean(errors.timeZone)}
-                    >
-                      <MenuItem value="UTC">UTC</MenuItem>
-                      <MenuItem value="America/New_York">
-                        America/New_York
-                      </MenuItem>
-                      <MenuItem value="Europe/London">Europe/London</MenuItem>
-                      <MenuItem value="Asia/Tokyo">Asia/Tokyo</MenuItem>
-                      {/* Add more options as needed */}
-                    </Select>
-                  )}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item>
-              <Button variant="contained" type="submit">
-                Submit
-              </Button>
-            </Grid>
-          </Grid>
-          {selectedTimezone !== "UTC" && (
-            <TimeSection
-              title={`Selected Time (${selectedTimezone})`}
-              time={currentTime}
-            />
+            <Box
+              width={"100%"}
+              textAlign={"center"}
+              sx={{ backgroundColor: "#e7376f" }}
+            >
+              <Typography variant="h3" fontWeight={"700"} color={"whitesmoke"}>
+                World Clock
+              </Typography>
+            </Box>
+
+            <Typography mt={1} variant="h5">
+              Current Date & Time
+            </Typography>
+            <Typography variant="h6">
+              Current Timezone: {IntlValues.timeZone}
+            </Typography>
+            <Box
+              p={5}
+              mt={1}
+              fontSize={"larger"}
+              fontWeight={"700"}
+              color={"black"}
+              sx={{ backgroundColor: "whitesmoke" }}
+            >
+              {date}
+            </Box>
+          </Box>
+
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            style={{ marginTop: 24 }}
+          >
+            <Typography mb={1} variant="h5">
+              Select Time Zone:{" "}
+            </Typography>
+            <Select
+              style={{
+                padding: "1rem 0.5rem",
+                marginBottom: "1rem",
+              }}
+              value={selectedTimezone}
+              onChange={(e) => setSelectedTimezone(e.target.value)}
+            >
+              <MenuItem value="">None</MenuItem>
+              {timezoneList.map((zone: any) => (
+                <MenuItem key={zone} value={zone}>
+                  {zone}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+          {selectedTimezone && (
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
+              <Typography variant="h5" mt={1}>
+                Selected Timezone: {selectedTimezone}
+              </Typography>
+              <Typography variant="h6" mt={1}>
+                Selected Timezone Date & Time : {""}
+              </Typography>
+              <Box
+                p={5}
+                mt={1}
+                mb={2}
+                fontSize={"larger"}
+                fontWeight={"700"}
+                color={"black"}
+                sx={{ backgroundColor: "whitesmoke" }}
+              >
+                {new Date().toLocaleString(IntlValues.locale, {
+                  timeZone: selectedTimezone,
+                })}
+              </Box>
+            </Box>
           )}
         </Box>
-      </Paper>
-    </Box>
+      </Box>
+    </>
   );
-};
-
-export default IndexPage;
+}

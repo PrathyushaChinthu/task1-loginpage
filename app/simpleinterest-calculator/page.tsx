@@ -1,5 +1,5 @@
 "use client";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -111,10 +111,11 @@ const Page = () => {
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
           <Typography color={"black"}>Principal Amount (INR):</Typography>
-          <input
+          <TextField
             type="number"
-            value={principal ?? ""}
-            onChange={(e) => setPrincipal(parseFloat(e.target.value))}
+            //value={principal ?? ""}
+            value={principal !== null ? principal : ""}
+            onChange={(e) => setPrincipal(parseInt(e.target.value))}
             style={{
               padding: "0.5rem",
               borderRadius: "10px",
@@ -123,10 +124,11 @@ const Page = () => {
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
           <Typography color={"black"}>Rate of Interest (%):</Typography>
-          <input
+          <TextField
             type="number"
-            value={rate ?? ""}
-            onChange={(e) => setRate(parseFloat(e.target.value))}
+            value={rate !== null ? rate : ""}
+            //value={rate ?? ""}
+            onChange={(e) => setRate(parseInt(e.target.value))}
             style={{
               padding: "0.5rem",
               borderRadius: "10px",
@@ -134,7 +136,7 @@ const Page = () => {
           />
         </Box>
         <Box flex={"1"} padding={"0 1rem"}>
-          <button
+          <Button
             onClick={onSubmit}
             style={{
               backgroundColor: "#124076",
@@ -144,7 +146,7 @@ const Page = () => {
             }}
           >
             Calculate
-          </button>
+          </Button>
         </Box>
         {timePeriod && simpleInterest !== null && (
           <Box color={"white"} flex={"1"} padding={"0 1rem 1rem 1rem"}>
