@@ -1,17 +1,17 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 
 interface TimeSectionProps {
   title: string;
   time: string;
 }
 
-const TimeSection: React.FC<TimeSectionProps> = ({ title, time }) => {
+const TimeSection = ({ title, time }: TimeSectionProps) => {
   return (
-    <div>
+    <Box>
       <Typography variant="h6">{title}</Typography>
       <Typography variant="body1">{time}</Typography>
-    </div>
+    </Box>
   );
 };
 
