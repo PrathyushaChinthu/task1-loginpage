@@ -8,7 +8,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 // Define Zod schema for the form data
 const ageSchema = z.object({
   dateOfBirth: z.coerce.date(),
-  secondDate: z.coerce.date(),
+  ageAtTheDateOf: z.coerce.date(),
 });
 
 const AgeCalculator = () => {
@@ -24,24 +24,21 @@ const AgeCalculator = () => {
 
   const onSubmit = (data: any) => {
     const dob = new Date(data.dateOfBirth);
-    const secondDate = new Date(data.secondDate);
+    const ado = new Date(data.ageAtTheDateOf);
 
     // Calculate age difference in milliseconds
-    const ageDifference = secondDate.getTime() - dob.getTime();
+    const ageDifference = ado.getTime() - dob.getTime();
 
-    // Convert milliseconds to seconds, minutes, hours, and days
-    const millisecondsInDay = 1000 * 60 * 60 * 24;
-    const millisecondsInYear = millisecondsInDay * 365.25; // Considering leap years
-
-    const years = Math.floor(ageDifference / millisecondsInYear);
-    const remainingMilliseconds = ageDifference - years * millisecondsInYear;
+    const years = Math.floor(ageDifference / (1000 * 60 * 60 * 24 * 365.25));
+    const remainingMilliseconds =
+      ageDifference - years * (1000 * 60 * 60 * 24 * 365.25);
 
     const months = Math.floor(
-      remainingMilliseconds / (millisecondsInDay * (365.25 / 12))
+      remainingMilliseconds / ((1000 * 60 * 60 * 24 * 365.25) / 12)
     );
     const remainingDays = Math.floor(
-      (remainingMilliseconds % (millisecondsInDay * (365.25 / 12))) /
-        millisecondsInDay
+      (remainingMilliseconds % ((1000 * 60 * 60 * 24 * 365.25) / 12)) /
+        (1000 * 60 * 60 * 24)
     );
 
     const result = `${years} years, ${months} months, ${remainingDays} days`;
@@ -83,13 +80,13 @@ const AgeCalculator = () => {
           )}
         />
         <Controller
-          name="secondDate"
+          name="ageAtTheDateOf"
           control={control}
           defaultValue=""
           render={({ field }) => (
             <TextField
               {...field}
-              id="secondDate"
+              id="ageAtTheDateOf"
               label="Age at the Date of"
               type="date"
               InputLabelProps={{
